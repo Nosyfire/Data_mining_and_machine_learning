@@ -15,7 +15,7 @@ class KNN:
 
         # Initialize the k, which is the number of nearest neighbors.
         self.k = k
-        # Initialize the type of weighting of the data points ("uniform",
+        # Initialize the type of weighting of the input points ("uniform",
         # or "distance").
         self.weights = weights
         # Initialize the X and y attributes with None.
@@ -23,8 +23,8 @@ class KNN:
         self._y = None
 
     def fit(self, X, y):
-        """This method saves the training data so it can be used to make
-        predictions for new data."""
+        """This method saves the training input so it can be used to make
+        predictions for new input."""
 
         # Check that X and y are numpy arrays.
         assert ((type(X) == np.ndarray)
@@ -44,33 +44,33 @@ class KNN:
 
     def _euclidean_distances(self, array, k_nearest_indices=None):
         """This method calculates the Euclidean distance between an array
-        and the data points in a matrix."""
+        and the input points in a matrix."""
 
         # If an array of indices is not passed, calculate the Euclidean
-        # distance between the input array and the entire training data
+        # distance between the input array and the entire training input
         # set.
         if type(k_nearest_indices) == type(None):
             euclidean_distances = np.sqrt(np.sum((self._X-array)**2,
                                                  axis=-1))
-        # If an array of the indicies of the k nearest data points is passed
+        # If an array of the indicies of the k nearest input points is passed
         # to the method from the _predict_one method, calculate the Euclidean
         # distances of the k nearest points.
         else:
             euclidean_distances = np.sqrt(np.sum((self._X[k_nearest_indices]
                                                   -array)**2,
                                                  axis=-1))
-        # Return the Euclidean distances of the array from the data points.
+        # Return the Euclidean distances of the array from the input points.
         return euclidean_distances
 
     def _k_nearest_indices(self, array):
         """This method takes in an array and finds the indices of the k
-        nearest data points in the training data."""
+        nearest input points in the training input."""
 
-        # Calculate the Euclidean distances between the new data point and
-        # the training data.
+        # Calculate the Euclidean distances between the new input point and
+        # the training input.
         euclidean_distances = self._euclidean_distances(array)
         # Sort the indices from smallest Euclidean distance from the new
-        # data point to the largest.
+        # input point to the largest.
         sorted_indices = np.argsort(euclidean_distances,
                                     axis=None,
                                     kind="quicksort")
@@ -131,10 +131,10 @@ class KNNClassifier(KNN):
         to predict multiple observations."""
 
         # Retrieve the indices of the k nearest observations to the new
-        # data point.
+        # input point.
         k_nearest_indices = self._k_nearest_indices(array)
         # Retrieve the labels of the k nearest observations to the new
-        # data point.
+        # input point.
         k_nearest_labels = self._y[k_nearest_indices]
 
         # If using uniform weighting, create a weight array of k ones.
@@ -147,7 +147,7 @@ class KNNClassifier(KNN):
             k_nearest_distances = self._euclidean_distances(array,
                                                             k_nearest_indices=k_nearest_indices)
             # Set the weights for the training labels equal to the inverse
-            # of their features' Euclidean distance from the new data point.
+            # of their features' Euclidean distance from the new input point.
             my_weights = 1 / (k_nearest_distances + smoothing)
 
         # Get the unique labels in the k nearest points.
@@ -199,10 +199,10 @@ class KNNRegresser(KNN):
         be used with the two child classes, making maintenance easier."""
 
         # Retrieve the indices of the k nearest observations to the new
-        # data point.
+        # input point.
         k_nearest_indices = self._k_nearest_indices(array)
         # Retrieve the labels of the k nearest observations to the new
-        # data point.
+        # input point.
         k_nearest_labels = self._y[k_nearest_indices]
 
         # If using uniform weighting, create a weight array of k ones.
@@ -214,7 +214,7 @@ class KNNRegresser(KNN):
             k_nearest_distances = self._euclidean_distances(array,
                                                             k_nearest_indices=k_nearest_indices)
             # Set the weights for the training labels equal to the inverse
-            # of their features' Euclidean distance from the new data point.
+            # of their features' Euclidean distance from the new input point.
             my_weights = 1 / (k_nearest_distances + smoothing)
 
         # Multiply the weights by their associated labels, sum the products
